@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Website</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://www.w3schools.com/w3images/forest.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        input[type="button"] {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        .weather-info {
+            margin-top: 20px;
+        }
+
+        .temperature {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 1.2em;
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Weather App</h1>
+        <p>Enter a location to get the weather details:</p>
+        <input type="text" id="location" placeholder="Enter location (e.g., London)">
+        <input type="button" value="Get Weather" onclick="getWeather()">
+
+        <div id="weather-info" class="weather-info"></div>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const location = document.getElementById('location').value;
+            const apiKey = '<YOUR_API_KEY_HERE>';
+            const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=yes`;
+
+            const errorMessage = document.getElementById('error-message');
+            const weatherInfo = document.getElementById('weather-info');
+
+            // Reset previous data and error message
+            weatherInfo.innerHTML = '';
+            errorMessage.innerHTML = '';
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.error) {
+                    errorMessage.innerHTML = `Error: ${data.error.message}`;
+                } else {
+                    const temperature = data.current.temp_c;
+                    const condition = data.current.condition.text;
+                    const iconUrl = data.current.condition.icon;
+                    const locationName = data.location.name;
+                    const region = data.location.region;
+                    const country = data.location.country;
+
+                    weatherInfo.innerHTML = `
+                        <h2>${locationName}, ${region}, ${country}</h2>
+                        <div class="temperature">${temperature}°C</div>
+                        <div class="description">${condition}</div>
+                        <img src="http:${iconUrl}" alt="weather icon">
+                    `;
+                }
+            } catch (error) {
+                errorMessage.innerHTML = 'Something went wrong. Please try again later.';
+            }
+        }
+    </script>
+</body>
+</html>
